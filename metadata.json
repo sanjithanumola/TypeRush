@@ -1,0 +1,6 @@
+{
+  "name": "TypeRush — Typing Speed & Accuracy Challenge",
+  "description": "Test your typing speed, improve accuracy, set personal records, and compete on local leaderboards in TypeRush.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
