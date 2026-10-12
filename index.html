@@ -1,21 +1,1595 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TypeRush — Typing Speed & Accuracy Challenge</title>
-    <meta name="description" content="Test your typing speed, improve accuracy, set personal records, and compete on local leaderboards in TypeRush." />
-    <meta property="og:title" content="TypeRush — Typing Speed & Accuracy Challenge" />
-    <meta property="og:description" content="Test your typing speed, improve accuracy, set personal records, and compete on local leaderboards in TypeRush." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-[#0b0f19] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeRush — Typing Speed & Accuracy Challenge</title>
+  <meta name="description" content="Test your typing speed, improve accuracy, set personal records, and compete on local leaderboards in TypeRush." />
+  <meta property="og:title" content="TypeRush — Typing Speed & Accuracy Challenge" />
+  <meta property="og:description" content="Test your typing speed, improve accuracy, set personal records, and compete on local leaderboards in TypeRush." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --bg-card: #0f172a;
+      --bg-input: #090d16;
+      --border: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #64748b;
+      --accent: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.35);
+      --success: #10b981;
+      --error: #f43f5e;
+      --error-bg: rgba(244, 63, 94, 0.2);
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
+    }
 
+    [data-theme="stealth"] {
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0b1120;
+      --border: #334155;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.3);
+    }
+
+    [data-theme="emerald"] {
+      --bg: #02140a;
+      --bg-card: #062814;
+      --bg-input: #010d06;
+      --border: #0a4020;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.35);
+    }
+
+    [data-theme="amber"] {
+      --bg: #0c0a09;
+      --bg-card: #1c1917;
+      --bg-input: #070504;
+      --border: #292524;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.35);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-input: #f1f5f9;
+      --border: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+      transition: background-color 0.25s, color 0.25s;
+    }
+
+    /* Top Bar Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.875rem 1.5rem;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .brand-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.025em;
+      text-decoration: none;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .brand-logo-badge {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), #10b981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #0b0f19;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-wordmark span span {
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding-bottom: 0.125rem;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+    }
+
+    .nav-btn.active {
+      color: var(--accent);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .icon-btn {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(30, 41, 59, 0.9);
+      color: var(--text-main);
+    }
+
+    .icon-btn.active {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent), #10b981);
+      color: #090d16;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--accent-glow);
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .primary-btn:hover {
+      opacity: 0.92;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 1rem 0 1.5rem;
+    }
+
+    .hero-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Challenge quick cards */
+    .challenge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      max-width: 860px;
+      margin: 1.5rem auto;
+    }
+
+    .challenge-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .challenge-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .challenge-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .challenge-card .card-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .challenge-card .card-desc {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+
+    .challenge-card .card-pb {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* Toolbar / HUD */
+    .toolbar-bar {
+      max-width: 860px;
+      margin: 0 auto 1.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .pill-group {
+      display: flex;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 0.625rem;
+      padding: 0.25rem;
+      gap: 0.25rem;
+    }
+
+    .filter-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #0b0f19;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* Live HUD Counters */
+    .hud-bar {
+      max-width: 860px;
+      margin: 0 auto 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.5rem;
+    }
+
+    .hud-stat-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .hud-timer {
+      font-family: var(--font-mono);
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .hud-timer-sub {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-left: 0.25rem;
+    }
+
+    .hud-metrics {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-left: 1px solid var(--border);
+      padding-left: 1rem;
+      font-family: var(--font-mono);
+    }
+
+    .hud-stat-box span:first-child {
+      display: block;
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .hud-stat-box span:last-child {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Typing Arena Canvas */
+    .typing-box {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 1.75rem 2rem;
+      position: relative;
+      cursor: text;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .typing-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    .typing-hidden-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: text;
+      z-index: 10;
+    }
+
+    .typing-text {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      line-height: 1.65;
+      height: 130px;
+      overflow: hidden;
+      user-select: none;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .char {
+      position: relative;
+      color: var(--text-muted);
+      transition: color 0.05s;
+    }
+
+    .char.correct {
+      color: var(--accent);
+    }
+
+    .char.incorrect {
+      color: var(--error);
+      background-color: var(--error-bg);
+      border-radius: 2px;
+    }
+
+    .char.cursor::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 10%;
+      bottom: 10%;
+      width: 2.5px;
+      background: var(--accent);
+      border-radius: 9999px;
+      box-shadow: 0 0 8px var(--accent);
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .typing-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Virtual Keyboard */
+    .keyboard-wrap {
+      max-width: 860px;
+      margin: 1.5rem auto 0;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 0.75rem;
+      user-select: none;
+    }
+
+    .kbd-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .kbd-key {
+      height: 2.25rem;
+      min-width: 2.25rem;
+      padding: 0 0.4rem;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: all 0.1s;
+    }
+
+    .kbd-key.active {
+      background: var(--accent);
+      color: #0b0f19;
+      box-shadow: 0 0 10px var(--accent-glow);
+      transform: scale(0.92);
+    }
+
+    .kbd-key.next {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(6, 182, 212, 0.15);
+    }
+
+    .kbd-space {
+      width: 18rem;
+    }
+
+    /* Modals & Overlays */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      max-width: 640px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .score-huge {
+      font-size: 4.5rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    /* SVG Chart */
+    .chart-container {
+      width: 100%;
+      height: 160px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    /* Table */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 60;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0b0f19;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .challenge-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { display: none; }
+      .typing-text { font-size: 1.125rem; }
+      .kbd-space { width: 10rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand-wordmark" id="brand-link">
+        <div class="brand-logo-badge">⚡</div>
+        <span>Type<span>Rush</span></span>
+      </div>
+
+      <nav id="nav-container">
+        <button class="nav-btn active" data-tab="test">Test</button>
+        <button class="nav-btn" data-tab="practice">Practice</button>
+        <button class="nav-btn" data-tab="leaderboard">Leaderboard</button>
+        <button class="nav-btn" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="badges">Badges</button>
+        <button class="nav-btn" data-tab="tips">Tips</button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-toggle-sound" title="Toggle Sound">🔊</button>
+        <button class="icon-btn" id="btn-open-settings" title="Settings">⚙️</button>
+        <button class="primary-btn" id="btn-quick-start">Start Typing</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <main id="app-root">
+    <!-- Test View Container (Default) -->
+    <div id="view-test">
+      <div class="hero">
+        <div class="hero-kicker">⚡ Competitive Speed Engine</div>
+        <h1>How fast can you type?</h1>
+        <p>Race the clock. Beat your records. Become faster.</p>
+      </div>
+
+      <!-- Quick Challenge Cards -->
+      <div class="challenge-grid">
+        <div class="challenge-card" data-dur="15">
+          <div class="card-title"><span>15s Sprint</span> ⏱️</div>
+          <div class="card-desc">Burst reaction speed</div>
+          <div class="card-pb" id="pb-15">PB: —</div>
+        </div>
+        <div class="challenge-card active" data-dur="30">
+          <div class="card-title"><span>30s Classic</span> ⏱️</div>
+          <div class="card-desc">Standard benchmark</div>
+          <div class="card-pb" id="pb-30">PB: —</div>
+        </div>
+        <div class="challenge-card" data-dur="60">
+          <div class="card-title"><span>60s Standard</span> ⏱️</div>
+          <div class="card-desc">Cadence & rhythm</div>
+          <div class="card-pb" id="pb-60">PB: —</div>
+        </div>
+        <div class="challenge-card" data-dur="120">
+          <div class="card-title"><span>120s Endurance</span> ⏱️</div>
+          <div class="card-desc">Stamina challenge</div>
+          <div class="card-pb" id="pb-120">PB: —</div>
+        </div>
+      </div>
+
+      <!-- Toolbar Options -->
+      <div class="toolbar-bar">
+        <!-- Durations -->
+        <div class="pill-group" id="group-durations">
+          <button class="filter-btn" data-dur="15">15s</button>
+          <button class="filter-btn active" data-dur="30">30s</button>
+          <button class="filter-btn" data-dur="60">60s</button>
+          <button class="filter-btn" data-dur="120">120s</button>
+          <button class="filter-btn" data-dur="practice">Practice</button>
+        </div>
+
+        <!-- Categories -->
+        <div class="pill-group" id="group-categories">
+          <button class="filter-btn active" data-cat="common">Words</button>
+          <button class="filter-btn" data-cat="sentences">Quotes</button>
+          <button class="filter-btn" data-cat="punctuation">Punctuation</button>
+          <button class="filter-btn" data-cat="code">Code</button>
+          <button class="filter-btn" data-cat="beginner">Beginner</button>
+          <button class="filter-btn" data-cat="daily">Daily</button>
+        </div>
+
+        <!-- Controls -->
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="icon-btn" id="btn-toggle-keyboard" title="Toggle Keyboard">⌨️</button>
+          <button class="icon-btn" id="btn-restart" title="Restart (Tab)">🔄</button>
+        </div>
+      </div>
+
+      <!-- Live HUD -->
+      <div class="hud-bar">
+        <div class="hud-stat-left">
+          <div>
+            <span class="hud-timer" id="hud-time">30</span>
+            <span class="hud-timer-sub" id="hud-time-label">s left</span>
+          </div>
+          <div class="hud-metrics">
+            <div class="hud-stat-box">
+              <span>WPM</span>
+              <span id="hud-wpm">0</span>
+            </div>
+            <div class="hud-stat-box">
+              <span>Accuracy</span>
+              <span id="hud-acc">100%</span>
+            </div>
+            <div class="hud-stat-box" id="hud-streak-box" style="display: none;">
+              <span>Streak</span>
+              <span id="hud-streak" style="color: #f59e0b;">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Typing Canvas -->
+      <div class="typing-box" id="typing-box">
+        <input type="text" id="hidden-input" class="typing-hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <div class="typing-text" id="passage-container"></div>
+        <div class="typing-footer">
+          <span>Click anywhere or type to begin</span>
+          <span>[Tab] to restart · [Esc] to unfocus</span>
+        </div>
+      </div>
+
+      <!-- On-screen Keyboard -->
+      <div class="keyboard-wrap" id="virtual-keyboard">
+        <!-- Generated dynamically -->
+      </div>
+    </div>
+
+    <!-- Practice Lab View -->
+    <div id="view-practice" style="display: none;"></div>
+
+    <!-- Leaderboard View -->
+    <div id="view-leaderboard" style="display: none;"></div>
+
+    <!-- Dashboard View -->
+    <div id="view-dashboard" style="display: none;"></div>
+
+    <!-- Badges View -->
+    <div id="view-badges" style="display: none;"></div>
+
+    <!-- Tips View -->
+    <div id="view-tips" style="display: none;"></div>
+  </main>
+
+  <!-- Results Modal -->
+  <div class="modal-backdrop" id="modal-results" style="display: none;">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem;">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Challenge Result</span>
+          <div class="score-huge" id="res-net-wpm">0</div>
+          <span style="font-family: var(--font-mono); color: var(--accent); font-weight: 700; font-size: 0.875rem;">NET WPM</span>
+          <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 0.75rem; margin-left: 0.5rem;" id="res-gross-wpm">(Gross: 0)</span>
+        </div>
+        <div style="text-align: right;">
+          <div id="res-tier-title" style="font-weight: 800; font-size: 1.125rem; color: var(--accent);">Advanced Typist</div>
+          <div id="res-tier-msg" style="font-size: 0.75rem; color: var(--text-muted); max-width: 220px;">Great rhythm!</div>
+        </div>
+      </div>
+
+      <!-- Metrics Breakdown -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin: 1rem 0;">
+        <div style="background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 0.75rem;">
+          <span style="font-size: 0.625rem; color: var(--text-muted); text-transform: uppercase; display: block;">Accuracy</span>
+          <span id="res-accuracy" style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono);">100%</span>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 0.75rem;">
+          <span style="font-size: 0.625rem; color: var(--text-muted); text-transform: uppercase; display: block;">Characters</span>
+          <span id="res-chars" style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono);">0/0</span>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 0.75rem;">
+          <span style="font-size: 0.625rem; color: var(--text-muted); text-transform: uppercase; display: block;">Duration</span>
+          <span id="res-duration" style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono);">30s</span>
+        </div>
+        <div style="background: rgba(30, 41, 59, 0.5); padding: 0.75rem; border-radius: 0.75rem;">
+          <span style="font-size: 0.625rem; color: var(--text-muted); text-transform: uppercase; display: block;">Record PB</span>
+          <span id="res-pb" style="font-size: 1.25rem; font-weight: 800; font-family: var(--font-mono);">—</span>
+        </div>
+      </div>
+
+      <!-- Timeline Chart -->
+      <div class="chart-container" id="chart-timeline"></div>
+
+      <!-- Buttons -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="primary-btn" id="btn-copy-card" style="background: #1e293b; color: var(--text-main); border: 1px solid var(--border);">📋 Copy Score</button>
+          <button class="filter-btn" id="btn-close-results">Close</button>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="primary-btn" id="btn-retry-test">Retry Challenge (Tab)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="modal-settings" style="display: none;">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-weight: 800; font-size: 1.125rem;">Settings & Preferences</h3>
+        <button class="icon-btn" id="btn-close-settings">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.35rem; font-family: var(--font-mono);">Player Nickname</label>
+          <input type="text" id="setting-nickname" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); padding: 0.6rem 0.8rem; border-radius: 0.5rem; color: var(--text-main); font-family: var(--font-mono);" />
+        </div>
+
+        <div>
+          <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.35rem; font-family: var(--font-mono);">Theme</label>
+          <div class="pill-group" id="setting-theme-group">
+            <button class="filter-btn active" data-theme-val="cyber">Cyber</button>
+            <button class="filter-btn" data-theme-val="stealth">Stealth</button>
+            <button class="filter-btn" data-theme-val="emerald">Matrix</button>
+            <button class="filter-btn" data-theme-val="amber">Gold</button>
+            <button class="filter-btn" data-theme-val="light">Light</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Strict Mode (No Backspace)</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Disables backspacing on mistake</div>
+          </div>
+          <input type="checkbox" id="setting-strict" style="width: 1.25rem; height: 1.25rem;" />
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 600; font-size: 0.875rem;">Sound Effects</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Synthesized mechanical audio</div>
+          </div>
+          <input type="checkbox" id="setting-sound" style="width: 1.25rem; height: 1.25rem;" checked />
+        </div>
+
+        <div style="padding-top: 1rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between;">
+          <button class="filter-btn" id="btn-clear-data" style="color: var(--error);">Reset All Data</button>
+          <button class="primary-btn" id="btn-save-settings">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vanilla JavaScript Logic Engine -->
+  <script>
+    // Audio Synthesizer (Zero network requests, 100% offline)
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx && window.AudioContext) {
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playClick() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1100 + Math.random() * 300, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.03);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.035);
+      }
+      playError() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      }
+      playSuccess() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99].forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const st = now + i * 0.08;
+          osc.frequency.setValueAtTime(f, st);
+          gain.gain.setValueAtTime(0.3, st);
+          gain.gain.exponentialRampToValueAtTime(0.001, st + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(st);
+          osc.stop(st + 0.28);
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    // Word Banks
+    const WORDS_COMMON = [
+      'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he',
+      'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or',
+      'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what', 'so', 'up', 'out', 'if', 'about',
+      'who', 'get', 'which', 'go', 'me', 'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know',
+      'take', 'people', 'into', 'year', 'your', 'good', 'some', 'could', 'them', 'see', 'other', 'than', 'then',
+      'now', 'look', 'only', 'come', 'its', 'over', 'think', 'also', 'back', 'after', 'use', 'two', 'how', 'our',
+      'work', 'first', 'well', 'way', 'even', 'new', 'want', 'because', 'any', 'these', 'give', 'day', 'most', 'us',
+      'speed', 'focus', 'accuracy', 'record', 'improve', 'practice', 'system', 'motion', 'digital', 'reflex', 'rhythm'
+    ];
+
+    const QUOTES = [
+      "Simplicity is prerequisite for reliability. Complex systems always fail in complex ways.",
+      "The only way to do great work is to love what you do. Keep pushing your limits.",
+      "Programs must be written for people to read, and only incidentally for machines to execute.",
+      "Speed without accuracy is reckless; accuracy without speed is hesitation. Balance both.",
+      "We are what we repeatedly do. Excellence, then, is not an act, but a disciplined habit."
+    ];
+
+    const CODE_SNIPPETS = [
+      "const speed = calculateWpm(chars, time); if (speed > 100) return 'Lightning';",
+      "function binarySearch(arr, target) { let left = 0, right = arr.length - 1; }",
+      "export default function App() { const [wpm, setWpm] = useState(0); return <Hud />; }"
+    ];
+
+    // State
+    const state = {
+      duration: 30, // 15, 30, 60, 120, 'practice'
+      category: 'common',
+      passage: '',
+      input: '',
+      isActive: false,
+      isFinished: false,
+      timeLeft: 30,
+      elapsed: 0,
+      timerId: null,
+      wpmTimeline: [],
+      streak: 0,
+      results: [],
+      settings: {
+        nickname: 'Speedster',
+        theme: 'cyber',
+        strict: false,
+        sound: true,
+        keyboard: true
+      }
+    };
+
+    // Load from localStorage safely
+    try {
+      const storedSettings = localStorage.getItem('typerush_settings');
+      if (storedSettings) Object.assign(state.settings, JSON.parse(storedSettings));
+      const storedResults = localStorage.getItem('typerush_results');
+      if (storedResults) state.results = JSON.parse(storedResults);
+    } catch (e) {}
+
+    // Apply Theme
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      state.settings.theme = theme;
+      saveData();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem('typerush_settings', JSON.stringify(state.settings));
+        localStorage.setItem('typerush_results', JSON.stringify(state.results));
+      } catch (e) {}
+    }
+
+    // Generate Passage
+    function generatePassage(cat) {
+      if (cat === 'sentences') {
+        return QUOTES[Math.floor(Math.random() * QUOTES.length)] + " " + QUOTES[Math.floor(Math.random() * QUOTES.length)];
+      }
+      if (cat === 'code') {
+        return CODE_SNIPPETS.join(' ');
+      }
+      // Common words
+      const words = [];
+      for (let i = 0; i < 90; i++) {
+        words.push(WORDS_COMMON[Math.floor(Math.random() * WORDS_COMMON.length)]);
+      }
+      return words.join(' ');
+    }
+
+    // Keyboard Layout
+    const KBD_ROWS = [
+      ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+      ['Caps', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
+      ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift'],
+      ['Space']
+    ];
+
+    function renderKeyboard(activeKey, nextKey) {
+      const container = document.getElementById('virtual-keyboard');
+      if (!state.settings.keyboard) {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'block';
+      let html = '';
+      KBD_ROWS.forEach(row => {
+        html += '<div class="kbd-row">';
+        row.forEach(key => {
+          let extraClass = '';
+          if (key === 'Space') extraClass = 'kbd-space';
+          const isAct = activeKey && (
+            (key === 'Space' && activeKey === ' ') ||
+            key.toLowerCase() === activeKey.toLowerCase()
+          );
+          const isNxt = nextKey && (
+            (key === 'Space' && nextKey === ' ') ||
+            key.toLowerCase() === nextKey.toLowerCase()
+          );
+          if (isAct) extraClass += ' active';
+          else if (isNxt) extraClass += ' next';
+          html += `<div class="kbd-key ${extraClass}">${key === 'Space' ? '—' : key}</div>`;
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    // Calculate live stats
+    function calcStats() {
+      const totalAttempted = state.input.length;
+      let correct = 0;
+      let errors = 0;
+      for (let i = 0; i < totalAttempted; i++) {
+        if (state.input[i] === state.passage[i]) correct++;
+        else errors++;
+      }
+      const secs = state.duration === 'practice' ? Math.max(1, state.elapsed) : Math.max(1, state.duration - state.timeLeft);
+      const mins = secs / 60;
+      const grossWpm = mins > 0 ? Math.round((totalAttempted / 5) / mins) : 0;
+      const netWpm = mins > 0 ? Math.max(0, Math.round(((correct / 5) - errors) / mins)) : 0;
+      const accuracy = totalAttempted > 0 ? Math.round((correct / totalAttempted) * 100) : 100;
+      return { grossWpm, netWpm, accuracy, correct, errors, total: totalAttempted };
+    }
+
+    // Render Passage to DOM
+    function renderPassage() {
+      const container = document.getElementById('passage-container');
+      const inputLen = state.input.length;
+      let html = '';
+      for (let i = 0; i < state.passage.length; i++) {
+        let cls = 'char';
+        if (i < inputLen) {
+          cls += state.input[i] === state.passage[i] ? ' correct' : ' incorrect';
+        }
+        if (i === inputLen) {
+          cls += ' cursor';
+        }
+        const char = state.passage[i];
+        html += `<span class="${cls}">${char === ' ' ? '&nbsp;' : char}</span>`;
+      }
+      container.innerHTML = html;
+
+      // Auto-scroll current line
+      const activeEl = container.querySelector('.cursor');
+      if (activeEl) {
+        const top = activeEl.offsetTop;
+        if (top > 70) {
+          container.scrollTop = top - 40;
+        } else {
+          container.scrollTop = 0;
+        }
+      }
+
+      // Next key on keyboard
+      const nextKey = state.passage[inputLen] || null;
+      renderKeyboard(null, nextKey);
+    }
+
+    // Restart Test
+    function initTest() {
+      if (state.timerId) clearInterval(state.timerId);
+      state.timerId = null;
+      state.isActive = false;
+      state.isFinished = false;
+      state.input = '';
+      state.elapsed = 0;
+      state.streak = 0;
+      state.wpmTimeline = [];
+      state.timeLeft = typeof state.duration === 'number' ? state.duration : 0;
+      state.passage = generatePassage(state.category);
+
+      document.getElementById('hidden-input').value = '';
+      document.getElementById('hud-time').innerText = state.timeLeft;
+      document.getElementById('hud-wpm').innerText = '0';
+      document.getElementById('hud-acc').innerText = '100%';
+      document.getElementById('hud-streak-box').style.display = 'none';
+
+      renderPassage();
+      updatePbsDisplay();
+      setTimeout(() => document.getElementById('hidden-input').focus(), 50);
+    }
+
+    // Finish Test
+    function finishTest() {
+      if (state.timerId) clearInterval(state.timerId);
+      state.isActive = false;
+      state.isFinished = true;
+
+      const stats = calcStats();
+      const dur = state.duration === 'practice' ? state.elapsed : state.duration;
+
+      // Find previous PB
+      const prevs = state.results.filter(r => r.duration === dur);
+      const prevPb = prevs.length > 0 ? Math.max(...prevs.map(r => r.netWpm)) : 0;
+      const isPb = stats.netWpm > prevPb;
+
+      const record = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString(),
+        duration: dur,
+        netWpm: stats.netWpm,
+        grossWpm: stats.grossWpm,
+        accuracy: stats.accuracy,
+        correct: stats.correct,
+        errors: stats.errors,
+        nickname: state.settings.nickname,
+        timeline: state.wpmTimeline
+      };
+
+      state.results.unshift(record);
+      saveData();
+      updatePbsDisplay();
+
+      if (state.settings.sound) sound.playSuccess();
+
+      // Show Results Modal
+      document.getElementById('res-net-wpm').innerText = stats.netWpm;
+      document.getElementById('res-gross-wpm').innerText = `(Gross: ${stats.grossWpm})`;
+      document.getElementById('res-accuracy').innerText = stats.accuracy + '%';
+      document.getElementById('res-chars').innerText = `${stats.correct}/${stats.errors}`;
+      document.getElementById('res-duration').innerText = dur + 's';
+      document.getElementById('res-pb').innerText = prevPb > 0 ? prevPb + ' WPM' : '—';
+
+      // Tier
+      let tier = 'Fluent Typist';
+      let msg = 'Good rhythm! Keep building muscle memory.';
+      if (stats.netWpm >= 100) { tier = 'Master Typist'; msg = 'Triple-digit speed! Elite competitive reflexes.'; }
+      else if (stats.netWpm >= 80) { tier = 'Lightning Typist'; msg = 'Blazing velocity and great accuracy.'; }
+      else if (stats.netWpm >= 60) { tier = 'Advanced Typist'; msg = 'Well above standard professional speed!'; }
+      document.getElementById('res-tier-title').innerText = tier;
+      document.getElementById('res-tier-msg').innerText = msg;
+
+      // Render Simple SVG Timeline
+      renderTimelineSvg(state.wpmTimeline);
+
+      document.getElementById('modal-results').style.display = 'flex';
+    }
+
+    function renderTimelineSvg(timeline) {
+      const container = document.getElementById('chart-timeline');
+      if (!timeline || timeline.length < 2) {
+        container.innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:0.75rem;">Timeline generated upon test completion</div>';
+        return;
+      }
+      const maxWpm = Math.max(...timeline.map(p => p.wpm), 60);
+      const w = 560;
+      const h = 130;
+      const pts = timeline.map((p, i) => {
+        const x = (i / (timeline.length - 1)) * (w - 40) + 20;
+        const y = h - 20 - (p.wpm / maxWpm) * (h - 40);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:100%;">
+          <polyline fill="none" stroke="var(--accent)" stroke-width="2.5" points="${pts}" />
+        </svg>
+      `;
+    }
+
+    // Input Keystrokes
+    const hiddenInput = document.getElementById('hidden-input');
+    hiddenInput.addEventListener('input', (e) => {
+      if (state.isFinished) return;
+      const val = e.target.value;
+
+      // Strict mode
+      if (state.settings.strict && val.length < state.input.length) {
+        e.target.value = state.input;
+        return;
+      }
+
+      // Start timer on 1st keystroke
+      if (!state.isActive && val.length > 0) {
+        state.isActive = true;
+        state.timerId = setInterval(() => {
+          state.elapsed++;
+          const stats = calcStats();
+          state.wpmTimeline.push({ sec: state.elapsed, wpm: stats.netWpm });
+
+          if (typeof state.duration === 'number') {
+            state.timeLeft--;
+            document.getElementById('hud-time').innerText = state.timeLeft;
+            if (state.timeLeft <= 0) finishTest();
+          } else {
+            document.getElementById('hud-time').innerText = state.elapsed;
+          }
+        }, 1000);
+      }
+
+      const lastChar = val[val.length - 1];
+      const targetChar = state.passage[val.length - 1];
+      const isCorrect = lastChar === targetChar;
+
+      renderKeyboard(lastChar, state.passage[val.length] || null);
+
+      if (state.settings.sound) {
+        if (isCorrect) sound.playClick();
+        else sound.playError();
+      }
+
+      state.input = val;
+      const stats = calcStats();
+      document.getElementById('hud-wpm').innerText = stats.netWpm;
+      document.getElementById('hud-acc').innerText = stats.accuracy + '%';
+
+      renderPassage();
+
+      if (val.length >= state.passage.length) {
+        finishTest();
+      }
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        document.getElementById('modal-results').style.display = 'none';
+        initTest();
+      } else if (e.key === 'Escape') {
+        document.getElementById('modal-results').style.display = 'none';
+        document.getElementById('modal-settings').style.display = 'none';
+      }
+    });
+
+    // Durations Buttons
+    document.querySelectorAll('#group-durations .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#group-durations .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const dur = btn.getAttribute('data-dur');
+        state.duration = dur === 'practice' ? 'practice' : parseInt(dur, 10);
+        initTest();
+      });
+    });
+
+    // Challenge Cards Click
+    document.querySelectorAll('.challenge-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.challenge-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        state.duration = parseInt(card.getAttribute('data-dur'), 10);
+        document.querySelectorAll('#group-durations .filter-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-dur') == state.duration);
+        });
+        initTest();
+      });
+    });
+
+    // Categories Buttons
+    document.querySelectorAll('#group-categories .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#group-categories .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.category = btn.getAttribute('data-cat');
+        initTest();
+      });
+    });
+
+    // Quick Action Buttons
+    document.getElementById('btn-restart').addEventListener('click', initTest);
+    document.getElementById('btn-retry-test').addEventListener('click', () => {
+      document.getElementById('modal-results').style.display = 'none';
+      initTest();
+    });
+    document.getElementById('btn-close-results').addEventListener('click', () => {
+      document.getElementById('modal-results').style.display = 'none';
+    });
+    document.getElementById('btn-quick-start').addEventListener('click', () => {
+      switchTab('test');
+      hiddenInput.focus();
+    });
+    document.getElementById('brand-link').addEventListener('click', () => switchTab('test'));
+
+    // Toggle Sound Button
+    const btnSound = document.getElementById('btn-toggle-sound');
+    btnSound.addEventListener('click', () => {
+      state.settings.sound = !state.settings.sound;
+      btnSound.innerText = state.settings.sound ? '🔊' : '🔇';
+      saveData();
+    });
+
+    // Toggle Keyboard Button
+    document.getElementById('btn-toggle-keyboard').addEventListener('click', () => {
+      state.settings.keyboard = !state.settings.keyboard;
+      renderKeyboard(null, state.passage[state.input.length]);
+      saveData();
+    });
+
+    // Copy Results
+    document.getElementById('btn-copy-card').addEventListener('click', () => {
+      const stats = calcStats();
+      const text = `⚡ TypeRush: ${stats.netWpm} Net WPM | ${stats.accuracy}% Accuracy (${state.duration}s test)`;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Score copied to clipboard!');
+      });
+    });
+
+    // Settings Modal Handlers
+    document.getElementById('btn-open-settings').addEventListener('click', () => {
+      document.getElementById('setting-nickname').value = state.settings.nickname;
+      document.getElementById('setting-strict').checked = state.settings.strict;
+      document.getElementById('setting-sound').checked = state.settings.sound;
+      document.getElementById('modal-settings').style.display = 'flex';
+    });
+    document.getElementById('btn-close-settings').addEventListener('click', () => {
+      document.getElementById('modal-settings').style.display = 'none';
+    });
+    document.getElementById('btn-save-settings').addEventListener('click', () => {
+      state.settings.nickname = document.getElementById('setting-nickname').value || 'Speedster';
+      state.settings.strict = document.getElementById('setting-strict').checked;
+      state.settings.sound = document.getElementById('setting-sound').checked;
+      saveData();
+      document.getElementById('modal-settings').style.display = 'none';
+    });
+    document.getElementById('btn-clear-data').addEventListener('click', () => {
+      if (confirm('Clear all local typing records and scores?')) {
+        state.results = [];
+        saveData();
+        updatePbsDisplay();
+        document.getElementById('modal-settings').style.display = 'none';
+      }
+    });
+
+    // Themes inside settings
+    document.querySelectorAll('#setting-theme-group .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#setting-theme-group .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyTheme(btn.getAttribute('data-theme-val'));
+      });
+    });
+
+    // Update Personal Bests Display
+    function updatePbsDisplay() {
+      [15, 30, 60, 120].forEach(dur => {
+        const el = document.getElementById('pb-' + dur);
+        if (el) {
+          const matching = state.results.filter(r => r.duration === dur);
+          const max = matching.length > 0 ? Math.max(...matching.map(r => r.netWpm)) : 0;
+          el.innerText = max > 0 ? `PB: ${max} WPM` : 'PB: —';
+        }
+      });
+    }
+
+    // Navigation Tabs Router
+    function switchTab(tabId) {
+      document.querySelectorAll('#nav-container .nav-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-tab') === tabId);
+      });
+      ['test', 'practice', 'leaderboard', 'dashboard', 'badges', 'tips'].forEach(t => {
+        const el = document.getElementById('view-' + t);
+        if (el) el.style.display = t === tabId ? 'block' : 'none';
+      });
+
+      if (tabId === 'leaderboard') renderLeaderboardView();
+      if (tabId === 'dashboard') renderDashboardView();
+      if (tabId === 'badges') renderBadgesView();
+      if (tabId === 'tips') renderTipsView();
+      if (tabId === 'practice') renderPracticeView();
+      if (tabId === 'test') hiddenInput.focus();
+    }
+
+    document.querySelectorAll('#nav-container .nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+    });
+
+    // Views rendering (Vanilla JS)
+    function renderLeaderboardView() {
+      const el = document.getElementById('view-leaderboard');
+      const sorted = [...state.results].sort((a,b) => b.netWpm - a.netWpm);
+      let rows = '';
+      sorted.slice(0, 15).forEach((r, idx) => {
+        rows += `
+          <tr>
+            <td style="font-weight:700;">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '#' + (idx+1)}</td>
+            <td>${r.nickname}</td>
+            <td style="font-weight:700;color:var(--accent);">${r.netWpm} WPM</td>
+            <td>${r.accuracy}%</td>
+            <td>${r.duration}s</td>
+            <td style="color:var(--text-muted);">${r.date}</td>
+          </tr>
+        `;
+      });
+      el.innerHTML = `
+        <div style="max-width:860px;margin:0 auto;">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;">🏆 Local Leaderboard</h2>
+          <p style="color:var(--text-muted);font-size:0.8125rem;margin-bottom:1.5rem;">Browser records saved in this session</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Rank</th><th>Typist</th><th>Net WPM</th><th>Accuracy</th><th>Mode</th><th>Date</th></tr>
+              </thead>
+              <tbody>
+                ${rows || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No records logged yet. Finish a test!</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboardView() {
+      const el = document.getElementById('view-dashboard');
+      const total = state.results.length;
+      const best = total > 0 ? Math.max(...state.results.map(r => r.netWpm)) : 0;
+      const avg = total > 0 ? Math.round(state.results.reduce((a,r) => a + r.netWpm, 0) / total) : 0;
+      el.innerHTML = `
+        <div style="max-width:860px;margin:0 auto;">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;">📊 Personal Dashboard</h2>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0;">
+            <div style="background:var(--bg-card);border:1px solid var(--border);padding:1.25rem;border-radius:1rem;">
+              <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">All-Time Best</span>
+              <div style="font-size:2rem;font-weight:900;color:var(--accent);">${best} WPM</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);padding:1.25rem;border-radius:1rem;">
+              <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">Average Speed</span>
+              <div style="font-size:2rem;font-weight:900;">${avg} WPM</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);padding:1.25rem;border-radius:1rem;">
+              <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;">Tests Taken</span>
+              <div style="font-size:2rem;font-weight:900;">${total}</div>
+            </div>
+          </div>
+          <button class="primary-btn" id="btn-export-json">Export Data JSON</button>
+        </div>
+      `;
+      document.getElementById('btn-export-json').onclick = () => {
+        const blob = new Blob([JSON.stringify(state.results, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'typerush_history.json';
+        a.click();
+      };
+    }
+
+    function renderBadgesView() {
+      const el = document.getElementById('view-badges');
+      const badges = [
+        { id: '1', name: 'First Rush', desc: 'Finish 1 test', unlocked: state.results.length >= 1, icon: '⚡' },
+        { id: '2', name: 'Velocity 40', desc: 'Surpass 40 WPM', unlocked: state.results.some(r => r.netWpm >= 40), icon: '🚀' },
+        { id: '3', name: 'Turbo 60', desc: 'Surpass 60 WPM', unlocked: state.results.some(r => r.netWpm >= 60), icon: '🔥' },
+        { id: '4', name: 'Lightning 80', desc: 'Surpass 80 WPM', unlocked: state.results.some(r => r.netWpm >= 80), icon: '⚡' },
+        { id: '5', name: 'Centurion 100', desc: 'Reach 100+ WPM', unlocked: state.results.some(r => r.netWpm >= 100), icon: '👑' },
+        { id: '6', name: 'Sniper 98%', desc: '98%+ Accuracy', unlocked: state.results.some(r => r.accuracy >= 98), icon: '🎯' }
+      ];
+      let cards = '';
+      badges.forEach(b => {
+        cards += `
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:1rem;padding:1.25rem;opacity:${b.unlocked ? '1' : '0.4'};">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">${b.unlocked ? b.icon : '🔒'}</div>
+            <div style="font-weight:800;font-size:0.9375rem;">${b.name}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">${b.desc}</div>
+            <div style="font-size:0.6875rem;color:${b.unlocked ? 'var(--accent)' : 'var(--text-muted)'};margin-top:0.5rem;font-weight:700;">
+              ${b.unlocked ? 'UNLOCKED' : 'LOCKED'}
+            </div>
+          </div>
+        `;
+      });
+      el.innerHTML = `
+        <div style="max-width:860px;margin:0 auto;">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;">🎖️ Achievements & Badges</h2>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;">${cards}</div>
+        </div>
+      `;
+    }
+
+    function renderTipsView() {
+      const el = document.getElementById('view-tips');
+      el.innerHTML = `
+        <div style="max-width:860px;margin:0 auto;">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;">📖 Typing Guide & Formulas</h2>
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem;margin:1.5rem 0;">
+            <h3 style="font-weight:700;margin-bottom:0.5rem;">WPM Calculation</h3>
+            <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:1rem;">1 Standard Word = 5 characters. Net WPM subtracts uncorrected errors.</p>
+            <code style="display:block;background:rgba(0,0,0,0.4);padding:0.75rem;border-radius:0.5rem;font-family:var(--font-mono);font-size:0.75rem;">
+              Gross WPM = (Total Typed / 5) / Elapsed Minutes<br/>
+              Net WPM = ((Correct Chars / 5) - Errors) / Elapsed Minutes
+            </code>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPracticeView() {
+      const el = document.getElementById('view-practice');
+      el.innerHTML = `
+        <div style="max-width:860px;margin:0 auto;">
+          <h2 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;">🎯 Targeted Row Drills</h2>
+          <p style="color:var(--text-muted);font-size:0.8125rem;margin-bottom:1.5rem;">Select a focused row drill below to build muscle memory</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+            <button class="primary-btn" onclick="startPracticeDrill('asdf jkl; asdf jkl; fad lad ask flash fall glad salad')">Home Row (ASDF JKL;)</button>
+            <button class="primary-btn" onclick="startPracticeDrill('quiet power write tree route quote report Europe write pepper')">Top Row (QWERTY)</button>
+            <button class="primary-btn" onclick="startPracticeDrill('zone cave zinc calm scan bomb mask verb comb zero buzz')">Bottom Row (ZXCVBNM)</button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.startPracticeDrill = function(text) {
+      state.duration = 'practice';
+      state.passage = text;
+      switchTab('test');
+      initTest();
+      state.passage = text;
+      renderPassage();
+    };
+
+    // Initial Launch
+    applyTheme(state.settings.theme);
+    initTest();
+  </script>
+</body>
+</html>
